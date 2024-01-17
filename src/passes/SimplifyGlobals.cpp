@@ -675,12 +675,10 @@ struct SimplifyGlobals : public Pass {
         constantGlobals.insert(global->name);
       }
     }
-    ConstantGlobalApplier(&constantGlobals, optimize)
-      .run(getPassRunner(), module);
-    // Note that we don't need to run on module code here, since we already
-    // handle applying constants in globals in propagateConstantsToGlobals (and
-    // in a more sophisticated manner, which takes into account that no sets of
-    // globals are possible during global instantiation).
+    ConstantGlobalApplier applier(&constantGlobals, optimize);
+
+    applier.run(getPassRunner(), module);
+    applier.runOnModuleCode(getPassRunner(), module);
   }
 
   // If we have a global that has a single use in the entire program, we can
